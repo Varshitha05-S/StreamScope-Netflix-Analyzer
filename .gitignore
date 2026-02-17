@@ -4,3 +4,7 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 Thumbs.db
+# Ignore datasets
+data/raw/*.csv
+data/processed/*.csv
+*.zip
