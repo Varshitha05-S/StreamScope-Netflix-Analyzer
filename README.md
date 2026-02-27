@@ -39,3 +39,29 @@ Netflix Movies and TV Shows dataset (Kaggle)
 - Feature engineering
 - ML: Clustering + Classification
 - Dashboard development and deployment
+## Milestone 2 – EDA & Feature Engineering Completed
+
+Implemented:
+
+- Netflix content growth analysis over time
+- Distribution of Movies vs TV Shows
+- Top Genres analysis
+- Country-level content contribution
+- Rating distribution insights
+- Content Length Category feature:
+    - Short Movie
+    - Medium Movie
+    - Long Movie
+    - Limited Series
+    - Multi-Season
+    - Long Running Series
+- Interactive dashboard with filtering:
+    - Year
+    - Genre
+    - Country
+    - Rating
+    - Content Type
+
+Note:
+The dataset does not explicitly provide a column to distinguish Netflix Originals from Licensed content.
+Therefore, this feature was not derived to maintain data integrity.
