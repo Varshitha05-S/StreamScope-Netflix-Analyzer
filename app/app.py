@@ -4,7 +4,6 @@ import plotly.express as px
 import os
 import numpy as np
 
-# ML Imports
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -12,13 +11,153 @@ from sklearn.cluster import KMeans
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
-    page_title="StreamScope - Netflix Analyzer",
+    page_title="Netflix Content Strategy Analyzer",
     layout="wide",
     page_icon="🎬"
 )
 
-st.title("🎬 StreamScope - Netflix Analyzer")
-st.write("A Data Visualization Dashboard for Netflix Movies and TV Shows Dataset")
+# ---------------- 🌌 UI ----------------
+st.markdown("""
+<style>
+.block-container { padding-top: 1rem !important; }
+header, footer { visibility: hidden; }
+
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #020617, #0f172a);
+}
+
+html, body, [class*="css"] {
+    color: #FFFFFF !important;
+    font-size: 20px !important;
+}
+
+h1 { font-size: 60px; font-weight: 800; }
+h2, h3 { font-size: 30px; font-weight: 700; }
+
+p { color: #E0E0E0; }
+
+.custom-card {
+    background: rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.stButton>button {
+    background: linear-gradient(90deg, #06b6d4, #a855f7);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+[data-testid="stDataFrame"] {
+    background: white !important;
+    color: black !important;
+}
+            /* SIDEBAR FULL VISIBILITY FIX */
+section[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* Sidebar Title (Netflix Analyzer) */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    font-size: 28px !important;
+}
+
+/* Sidebar Labels (Navigate, Filters) */
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span {
+    color: #E5E7EB !important;
+    font-weight: 600 !important;
+    font-size: 20px !important;
+}
+
+/* Radio Buttons (Dashboard, Search, etc.) */
+div[role="radiogroup"] label {
+    color: #FFFFFF !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* Sidebar Collapse Arrow (<<) */
+button[kind="header"] svg {
+    fill: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* Multiselect selected items (Movie, TV Show) */
+span[data-baseweb="tag"] {
+    background-color: #ef4444 !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Filter Titles */
+section[data-testid="stSidebar"] .stMarkdown h1,
+section[data-testid="stSidebar"] .stMarkdown h2 {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+
+/* Slider text */
+section[data-testid="stSidebar"] .stSlider label {
+    color: #E5E7EB !important;
+    font-weight: 600 !important;
+}
+            /* 🔥 NEON GRADIENT TITLE */
+.neon-title {
+    font-size: 60px;
+    font-weight: 600;
+    text-align: center;
+
+    text-shadow:
+        0 0 5px rgba(0, 255, 255, 0.7),
+        0 0 10px rgba(168, 85, 247, 0.7),
+        0 0 20px rgba(255, 0, 255, 0.6);
+
+    letter-spacing: 2px;
+}
+            /* 🔥 FUTURE STYLE TITLE */
+.future-title {
+    font-size: 60px;
+    font-weight: 900;
+    text-align: center;
+    color: #FFFFFF; /* pure white center */
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        0 0 5px rgba(255,255,255,0.9),   /* inner white glow */
+        0 0 10px rgba(0, 200, 255, 0.8), /* cyan glow */
+        0 0 20px rgba(0, 150, 255, 0.7),
+        0 0 40px rgba(168, 85, 247, 0.6), /* purple glow */
+        0 0 60px rgba(168, 85, 247, 0.5);
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------- TITLE ----------------
+st.markdown("""
+<h1 class='neon-title'>🎬 NETFLIX CONTENT STRATEGY ANALYZER</h1>
+<p style='text-align:center; font-size:22px; color:#E0E0E0;'>
+Insights into Global Streaming Trends
+</p>
+""", unsafe_allow_html=True)
+
+st.success("💡 Explore, Analyze and Discover Netflix Content")
 
 # ---------------- LOAD DATA ----------------
 DATA_PATH = "data/processed/netflix_cleaned.csv"
@@ -26,304 +165,256 @@ DATA_PATH = "data/processed/netflix_cleaned.csv"
 @st.cache_data
 def load_data(path):
     df = pd.read_csv(path)
-
     df["rating"] = df["rating"].astype(str).str.strip()
     df["title"] = df["title"].astype(str).str.strip()
-    df["country"] = df["country"].fillna("Unknown").astype(str).str.strip()
+    df["country"] = df["country"].fillna("Unknown")
 
     df["genre_list"] = df["listed_in"].fillna("").apply(
-        lambda x: [g.strip() for g in x.split(",") if g.strip() != ""]
+        lambda x: [g.strip() for g in x.split(",")]
     )
-
     return df
 
 if not os.path.exists(DATA_PATH):
-    st.error("Processed dataset not found!")
+    st.error("Dataset not found!")
     st.stop()
 
 df = load_data(DATA_PATH)
 
-# ============================================================
-# FEATURE ENGINEERING
-# ============================================================
-
+# ---------------- FEATURE ENGINEERING ----------------
 df["duration_numeric"] = df["duration"].str.extract(r"(\d+)").astype(float)
-
 df["duration_minutes"] = np.where(df["type"] == "Movie", df["duration_numeric"], np.nan)
 df["seasons"] = np.where(df["type"] == "TV Show", df["duration_numeric"], np.nan)
 
-def categorize_content(row):
-    if row["type"] == "Movie" and pd.notna(row["duration_minutes"]):
-        if row["duration_minutes"] < 90:
-            return "Short Movie"
-        elif row["duration_minutes"] <= 120:
-            return "Medium Movie"
-        else:
-            return "Long Movie"
-
-    if row["type"] == "TV Show" and pd.notna(row["seasons"]):
-        if row["seasons"] == 1:
-            return "Limited Series"
-        elif row["seasons"] <= 3:
-            return "Multi-Season"
-        else:
-            return "Long Running Series"
-
-df["content_length_category"] = df.apply(categorize_content, axis=1)
-
-# ============================================================
-# MACHINE LEARNING
-# ============================================================
-
+# ---------------- ML ----------------
 df["rating"] = df["rating"].fillna("Unknown")
 le = LabelEncoder()
 df["rating_encoded"] = le.fit_transform(df["rating"])
-
 df["type_encoded"] = df["type"].map({"Movie": 0, "TV Show": 1})
 
-model_df = df[[
-    "release_year",
-    "rating_encoded",
-    "duration_minutes",
-    "seasons",
-    "type_encoded"
-]].fillna(0)
+model_df = df[["release_year","rating_encoded","duration_minutes","seasons","type_encoded"]].fillna(0)
 
 X = model_df.drop("type_encoded", axis=1)
 y = model_df["type_encoded"]
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf = RandomForestClassifier()
 rf.fit(X_train, y_train)
-
 accuracy = rf.score(X_test, y_test)
 
 scaler = StandardScaler()
 scaled = scaler.fit_transform(X)
 
-kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans = KMeans(n_clusters=3)
 df["cluster"] = kmeans.fit_predict(scaled)
 
-# ============================================================
-# SIDEBAR FILTERS
-# ============================================================
+# ---------------- SIDEBAR ----------------
+st.sidebar.title("🎬 Netflix Analyzer")
+
+if st.sidebar.button("🔄 Reset Filters"):
+    st.rerun()
+
+page = st.sidebar.radio("Navigate", [
+    "📊 Dashboard","📊 Advanced Analysis","🔍 Search","🎯 Recommendations",
+    "🎬 Content Details","📌 Insights","🤖 ML Analysis"
+])
 
 st.sidebar.header("🔎 Filters")
 
 type_filter = st.sidebar.multiselect(
-    "Select Type",
-    sorted(df["type"].unique()),
-    default=sorted(df["type"].unique())
+    "Type", df["type"].unique(), default=df["type"].unique()
 )
 
 year_filter = st.sidebar.slider(
-    "Select Release Year Range",
+    "Year Range",
     int(df["release_year"].min()),
     int(df["release_year"].max()),
     (int(df["release_year"].min()), int(df["release_year"].max()))
 )
 
-rating_filter = st.sidebar.multiselect(
-    "Select Rating",
-    sorted(df["rating"].unique()),
-    default=sorted(df["rating"].unique())
-)
-with st.sidebar.expander("📘 Rating Meanings (Click to View)"):
-    st.markdown("""
-    **Movie Ratings**
-    - **G** → General Audience (All ages)
-    - **PG** → Parental Guidance Suggested
-    - **PG-13** → Parents Strongly Cautioned (13+)
-    - **R** → Restricted (Under 17 requires adult)
-    - **NC-17** → Adults Only (18+)
-    - **UR / NR** → Unrated / Not Rated
-
-    **TV Ratings**
-    - **TV-Y** → Suitable for all children
-    - **TV-Y7** → Suitable for children 7+
-    - **TV-Y7-FV** → 7+ (Fantasy Violence)
-    - **TV-G** → General Audience
-    - **TV-PG** → Parental Guidance Suggested
-    - **TV-14** → 14+ (May contain strong content)
-    - **TV-MA** → Mature Audience Only (18+)
-
-    **Other**
-    - **nan** → Rating not available in dataset
-    """)
-
-country_filter = st.sidebar.multiselect(
-    "Select Country (Top 30)",
-    df["country"].value_counts().head(30).index.tolist(),
-    default=df["country"].value_counts().head(30).index.tolist()
-)
-
-all_genres = df["genre_list"].explode()
-genre_filter = st.sidebar.multiselect(
-    "Select Genre (Top 30)",
-    all_genres.value_counts().head(30).index.tolist(),
-    default=all_genres.value_counts().head(30).index.tolist()
-)
-
 filtered_df = df[
     (df["type"].isin(type_filter)) &
-    (df["release_year"].between(year_filter[0], year_filter[1])) &
-    (df["rating"].isin(rating_filter)) &
-    (df["country"].isin(country_filter))
+    (df["release_year"].between(year_filter[0], year_filter[1]))
 ]
 
-filtered_df = filtered_df[
-    filtered_df["genre_list"].apply(lambda x: any(g in genre_filter for g in x))
-]
-# Safety check if no data after filtering
-if filtered_df.empty:
-    st.warning("⚠ No data available for selected filters. Please adjust your filter options.")
-    st.stop()
-
-# ============================================================
-# TABS
-# ============================================================
-
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["📊 Dashboard", "🔍 Search Titles", "📌 Insights", "🤖 ML Analysis"]
-)
-
-# ============================================================
-# DASHBOARD TAB
-# ============================================================
-
-with tab1:
+# ---------------- DASHBOARD ----------------
+if page == "📊 Dashboard":
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Titles", len(filtered_df))
-    col2.metric("Movies", len(filtered_df[filtered_df["type"] == "Movie"]))
-    col3.metric("TV Shows", len(filtered_df[filtered_df["type"] == "TV Show"]))
-    col4.metric("Unique Countries", filtered_df["country"].nunique())
+
+    col1.metric("🎬 Total Titles", len(filtered_df))
+    col2.metric("🍿 Movies", len(filtered_df[filtered_df["type"]=="Movie"]))
+    col3.metric("📺 TV Shows", len(filtered_df[filtered_df["type"]=="TV Show"]))
+    col4.metric("🌍 Countries", filtered_df["country"].nunique())
 
     st.divider()
 
-    # Movies vs TV
-    type_counts = filtered_df["type"].value_counts().reset_index()
-    type_counts.columns = ["Type", "Count"]
-    st.plotly_chart(px.bar(type_counts, x="Type", y="Count", text="Count"),
+    st.plotly_chart(px.bar(filtered_df["type"].value_counts().reset_index(),
+                           x="type", y="count",
+                           title="Movies vs TV Shows",
+                           template="plotly_dark"),
                     use_container_width=True)
 
-    # Top Genres
     genres = filtered_df["genre_list"].explode()
-    top_genres = genres.value_counts().head(10).reset_index()
-    top_genres.columns = ["Genre", "Count"]
-    st.plotly_chart(px.bar(top_genres, x="Genre", y="Count", text="Count"),
+    st.plotly_chart(px.bar(genres.value_counts().head(10),
+                           title="Top Genres",
+                           template="plotly_dark"),
                     use_container_width=True)
 
-    # Year Trend
-    year_counts = filtered_df["release_year"].value_counts().sort_index().reset_index()
-    year_counts.columns = ["Year", "Count"]
-    st.plotly_chart(px.line(year_counts, x="Year", y="Count", markers=True),
+    st.subheader("📈 Trend Insights")
+
+    latest_year = filtered_df["release_year"].max()
+    st.info(f"📅 Peak Year: {latest_year}")
+
+    top_genre = genres.value_counts().idxmax()
+    st.success(f"🎯 Top Genre: {top_genre}")
+
+    country_counts = filtered_df["country"].value_counts().head(10)
+    st.plotly_chart(px.pie(values=country_counts.values,
+                           names=country_counts.index,
+                           title="Top Countries"),
                     use_container_width=True)
 
-    # Content Length
-    length_counts = filtered_df["content_length_category"].value_counts().reset_index()
-    length_counts.columns = ["Category", "Count"]
-    st.plotly_chart(px.bar(length_counts, x="Category", y="Count", text="Count"),
+# ---------------- 🔥 ADVANCED ANALYSIS ----------------
+elif page == "📊 Advanced Analysis":
+
+    st.subheader("📊 Exploratory Data Analysis (EDA)")
+
+    # Duration Distribution
+    st.plotly_chart(px.histogram(df, x="duration_numeric",
+                                 title="Duration Distribution",
+                                 template="plotly_dark"),
                     use_container_width=True)
 
-    # Rating Distribution
-    st.subheader("📺 Rating Distribution")
-    rating_counts = filtered_df["rating"].value_counts().reset_index()
-    rating_counts.columns = ["Rating", "Count"]
-    st.plotly_chart(px.bar(rating_counts, x="Rating", y="Count", text="Count"),
+    # Release Year Trend
+    year_counts = df["release_year"].value_counts().sort_index()
+    st.plotly_chart(px.line(x=year_counts.index, y=year_counts.values,
+                           title="Content Release Trend Over Years",
+                           template="plotly_dark"),
                     use_container_width=True)
 
-    # Top Countries
-    st.subheader("🌍 Top 10 Countries")
-    country_counts = filtered_df["country"].value_counts().head(10).reset_index()
-    country_counts.columns = ["Country", "Count"]
-    st.plotly_chart(px.bar(country_counts, x="Country", y="Count", text="Count"),
+    # Ratings Distribution
+    st.plotly_chart(px.bar(df["rating"].value_counts(),
+                           title="Ratings Distribution",
+                           template="plotly_dark"),
                     use_container_width=True)
 
-    # 🔥 Type vs Rating Heatmap
-    st.subheader("📊 Type vs Rating Analysis")
-    type_rating = pd.crosstab(filtered_df["type"], filtered_df["rating"])
-    fig_heatmap = px.imshow(type_rating, text_auto=True, aspect="auto")
-    st.plotly_chart(fig_heatmap, use_container_width=True)
+    # Movies vs TV Shows Over Time
+    trend = df.groupby(["release_year","type"]).size().reset_index(name="count")
+    st.plotly_chart(px.line(trend, x="release_year", y="count",
+                           color="type",
+                           title="Movies vs TV Shows Trend",
+                           template="plotly_dark"),
+                    use_container_width=True)
 
-    # 🔥 Movie Duration Histogram
-    st.subheader("⏱ Movie Duration Distribution")
-    movie_df = filtered_df[filtered_df["type"] == "Movie"].copy()
+    # Cluster Visualization
+    st.plotly_chart(px.scatter(df, x="release_year",
+                               y="duration_numeric",
+                               color="cluster",
+                               title="Cluster Distribution",
+                               template="plotly_dark"),
+                    use_container_width=True)
 
-    if not movie_df.empty:
-        movie_df["duration_numeric"] = movie_df["duration"].str.extract(r"(\d+)").astype(float)
-        fig_hist = px.histogram(movie_df, x="duration_numeric", nbins=30)
-        st.plotly_chart(fig_hist, use_container_width=True)
-    else:
-        st.info("No movies available for selected filters.")
+# ---------------- SEARCH ----------------
+elif page == "🔍 Search":
 
-    # Download
-    csv = filtered_df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="⬇ Download Filtered Dataset",
-        data=csv,
-        file_name="filtered_netflix_data.csv",
-        mime="text/csv"
-    )
+    search = st.text_input("Search Title")
+    selected_type = st.selectbox("Filter by Type", ["All"] + list(df["type"].unique()))
 
-# ============================================================
-# SEARCH TAB
-# ============================================================
+    results = df[df["title"].str.contains(search, case=False, na=False)]
 
-with tab2:
-    search_text = st.text_input("Search Title")
-    if search_text:
-        results = df[df["title"].str.contains(search_text, case=False, na=False)]
-        if results.empty:
-            st.warning("No matching titles found.")
+    if selected_type != "All":
+        results = results[results["type"] == selected_type]
+
+    st.dataframe(results[["title","type","rating","country"]])
+
+# ---------------- RECOMMEND ----------------
+elif page == "🎯 Recommendations":
+
+    st.subheader("🎯 Smart Recommendations")
+
+    genre = st.selectbox("Genre", df["genre_list"].explode().unique())
+    country = st.selectbox("Country", df["country"].unique())
+
+    rec_df = df[
+        (df["genre_list"].apply(lambda x: genre in x)) &
+        (df["country"] == country)
+    ].copy()
+
+    if st.button("Recommend"):
+
+        if rec_df.empty:
+            st.warning("No results found")
         else:
-            st.success(f"Found {len(results)} matching titles")
-            st.dataframe(results)
+            rec_df["score"] = (
+                (rec_df["release_year"] / rec_df["release_year"].max()) * 0.3 +
+                (rec_df["rating_encoded"] / rec_df["rating_encoded"].max()) * 0.3 +
+                (rec_df["duration_numeric"].fillna(0) / rec_df["duration_numeric"].max()) * 0.4
+            )
 
-# ============================================================
-# INSIGHTS TAB
-# ============================================================
+            rec_df = rec_df.sort_values(by="score", ascending=False)
 
-with tab3:
-    st.success(f"Most Common Genre: {df['genre_list'].explode().value_counts().idxmax()}")
-    st.success(f"Most Common Country: {df['country'].value_counts().idxmax()}")
-    st.success(f"Dataset Year Range: {df['release_year'].min()} - {df['release_year'].max()}")
-    st.success("Cluster groups represent content patterns based on duration, rating, and release year.")
+            for _, row in rec_df.head(10).iterrows():
+                st.markdown(f"""
+                <div class="custom-card">
+                <b>🎬 {row['title']}</b><br>
+                ⭐ Score: {round(row['score'],2)}<br>
+                Type: {row['type']} | Rating: {row['rating']}<br>
+                Genre: {row['listed_in']}<br>
+                💡 Recommended based on your preferences
+                </div>
+                """, unsafe_allow_html=True)
 
-# ============================================================
-# ML TAB
-# ============================================================
+# ---------------- DETAILS ----------------
+elif page == "🎬 Content Details":
 
-with tab4:
+    title = st.selectbox("Select Title", df["title"])
+    m = df[df["title"] == title].iloc[0]
 
-    st.metric("Classification Accuracy (Movie vs TV Show)", f"{accuracy:.2f}")
+    st.subheader(m["title"])
+    st.write("Type:", m["type"])
+    st.write("Genre:", m["listed_in"])
+    st.write("Country:", m["country"])
+    st.write("Rating:", m["rating"])
+    st.write("Year:", m["release_year"])
 
-    importance = pd.DataFrame({
+# ---------------- INSIGHTS ----------------
+elif page == "📌 Insights":
+
+    st.success(f"Top Genre: {df['genre_list'].explode().value_counts().idxmax()}")
+    st.success(f"Top Country: {df['country'].value_counts().idxmax()}")
+
+    st.info("""
+🎯 Use Case:
+Helps OTT platforms decide:
+- What content to produce
+- Which genres trend globally
+- Region-based preferences
+""")
+
+# ---------------- ML ----------------
+elif page == "🤖 ML Analysis":
+
+    st.metric("Model Accuracy", f"{accuracy:.2f}")
+
+    imp = pd.DataFrame({
         "Feature": X.columns,
         "Importance": rf.feature_importances_
-    }).sort_values(by="Importance", ascending=False)
+    })
 
-    st.plotly_chart(px.bar(importance, x="Feature", y="Importance", text="Importance"),
+    st.plotly_chart(px.bar(imp, x="Feature", y="Importance",
+                           template="plotly_dark"),
                     use_container_width=True)
 
-    cluster_counts = df["cluster"].value_counts().reset_index()
-    cluster_counts.columns = ["Cluster", "Count"]
-    st.plotly_chart(px.bar(cluster_counts, x="Cluster", y="Count", text="Count"),
+    st.plotly_chart(px.scatter(df, x="release_year",
+                               y="duration_minutes",
+                               color="cluster",
+                               template="plotly_dark"),
                     use_container_width=True)
 
-    st.subheader("📊 Cluster Visualization")
-    fig_cluster_scatter = px.scatter(
-        df,
-        x="release_year",
-        y="duration_minutes",
-        color="cluster"
-    )
-    st.plotly_chart(fig_cluster_scatter, use_container_width=True)
-
-    st.subheader("🔗 Correlation Heatmap")
-    corr = model_df.corr()
-    fig_corr = px.imshow(corr, text_auto=True, aspect="auto")
-    st.plotly_chart(fig_corr, use_container_width=True)
+    st.subheader("📊 Cluster Meaning")
+    st.write("""
+Cluster 0 → Short/Recent Content  
+Cluster 1 → Long Movies  
+Cluster 2 → Multi-season Shows  
+""")
