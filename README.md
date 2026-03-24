@@ -1,67 +1,183 @@
-# StreamScope: Netflix Content Strategy Analyzer
+# 🎬 Netflix Content Strategy Analyzer  
+### Insights into Global Streaming Trends  
 
-A data visualization and analytics project that analyzes Netflix’s content catalog using the Kaggle Netflix Movies and TV Shows dataset.
+---
 
-## Objective
-To uncover trends in Netflix’s content strategy such as:
-- Content growth over time
-- Movies vs TV Shows distribution
-- Genre and rating popularity
-- Country-wise content contribution
-- Advanced analytics using clustering and classification
+## 📌 Project Overview  
 
-## Tech Stack
-- Python
-- pandas, numpy
-- matplotlib, seaborn, plotly
-- scikit-learn
-- Streamlit (Dashboard)
+The **Netflix Content Strategy Analyzer** is an interactive data analytics dashboard that helps analyze Netflix content using data science and machine learning techniques.  
 
-## Project Structure
-app/        -> Streamlit dashboard code  
-data/       -> Raw and cleaned datasets  
-notebooks/  -> Data cleaning, EDA, feature engineering, modeling  
-reports/    -> Screenshots, insights, and summary report  
+It transforms raw OTT platform data into meaningful insights to support **content strategy decisions**.
 
-## Current Progress
-- Repository initialized
-- Virtual environment created
-- Required libraries installed
-- Folder structure created
+---
 
-## Dataset
-Netflix Movies and TV Shows dataset (Kaggle)
+## 🎯 Problem Statement  
 
-## Next Steps
-- Download dataset
-- Data cleaning and preprocessing
-- Exploratory Data Analysis (EDA)
-- Feature engineering
-- ML: Clustering + Classification
-- Dashboard development and deployment
-## Milestone 2 – EDA & Feature Engineering Completed
+OTT platforms like Netflix generate massive volumes of content data.  
+Understanding this data is essential for:
 
-Implemented:
+- Viewer preferences  
+- Genre popularity  
+- Regional trends  
 
-- Netflix content growth analysis over time
-- Distribution of Movies vs TV Shows
-- Top Genres analysis
-- Country-level content contribution
-- Rating distribution insights
-- Content Length Category feature:
-    - Short Movie
-    - Medium Movie
-    - Long Movie
-    - Limited Series
-    - Multi-Season
-    - Long Running Series
-- Interactive dashboard with filtering:
-    - Year
-    - Genre
-    - Country
-    - Rating
-    - Content Type
+However:  
+- Data is large and unstructured  
+- Manual analysis is difficult  
+- Lack of intelligent tools  
 
-Note:
-The dataset does not explicitly provide a column to distinguish Netflix Originals from Licensed content.
-Therefore, this feature was not derived to maintain data integrity.git push origin milestone-2-dashboard
+---
+
+## 💡 Solution  
+
+This project provides:
+
+- Interactive dashboard using Streamlit  
+- Data visualization using Plotly  
+- Machine learning-based insights  
+- Smart filtering and search  
+
+---
+
+## 🚀 Features  
+
+- 📊 Interactive Dashboard  
+- 🔍 Search and Filter Content  
+- 🎯 Smart Recommendation System  
+- 📈 Trend Analysis (Year, Genre, Country)  
+- 🤖 Machine Learning Insights  
+- 📌 Content Details Viewer  
+
+---
+
+## 🛠 Tech Stack  
+
+**Frontend:**  
+- Streamlit  
+
+**Backend:**  
+- Python  
+
+**Libraries:**  
+- Pandas  
+- NumPy  
+- Plotly  
+- Scikit-learn  
+
+---
+
+## 🤖 Machine Learning  
+
+- **Random Forest Classifier**  
+  → Predicts content type  
+
+- **K-Means Clustering**  
+  → Groups content into patterns  
+
+---
+
+## 📊 Key Insights  
+
+- Drama is the most dominant genre  
+- USA produces highest content  
+- Rapid growth after 2015  
+
+---
+
+## 📁 Project Structure  
+# 🎬 Netflix Content Strategy Analyzer  
+### Insights into Global Streaming Trends  
+
+---
+
+## 📌 Project Overview  
+
+The **Netflix Content Strategy Analyzer** is an interactive data analytics dashboard that helps analyze Netflix content using data science and machine learning techniques.  
+
+It transforms raw OTT platform data into meaningful insights to support **content strategy decisions**.
+
+---
+
+## 🎯 Problem Statement  
+
+OTT platforms like Netflix generate massive volumes of content data.  
+Understanding this data is essential for:
+
+- Viewer preferences  
+- Genre popularity  
+- Regional trends  
+
+However:  
+- Data is large and unstructured  
+- Manual analysis is difficult  
+- Lack of intelligent tools  
+
+---
+
+## 💡 Solution  
+
+This project provides:
+
+- Interactive dashboard using Streamlit  
+- Data visualization using Plotly  
+- Machine learning-based insights  
+- Smart filtering and search  
+
+---
+
+## 🚀 Features  
+
+- 📊 Interactive Dashboard  
+- 🔍 Search and Filter Content  
+- 🎯 Smart Recommendation System  
+- 📈 Trend Analysis (Year, Genre, Country)  
+- 🤖 Machine Learning Insights  
+- 📌 Content Details Viewer  
+
+---
+
+## 🛠 Tech Stack  
+
+**Frontend:**  
+- Streamlit  
+
+**Backend:**  
+- Python  
+
+**Libraries:**  
+- Pandas  
+- NumPy  
+- Plotly  
+- Scikit-learn  
+
+---
+
+## 🤖 Machine Learning  
+
+- **Random Forest Classifier**  
+  → Predicts content type  
+
+- **K-Means Clustering**  
+  → Groups content into patterns  
+
+---
+
+## 📊 Key Insights  
+
+- Drama is the most dominant genre  
+- USA produces highest content  
+- Rapid growth after 2015  
+
+---
+
+## 📁 Project Structure  
+
+---
+
+## ▶️ How to Run  
+
+```bash
+git clone https://github.com/Varshitha05-S/StreamScope-Netflix-Analyzer.git
+cd StreamScope-Netflix-Analyzer
+
+pip install -r requirements.txt
+streamlit run app/app.py
