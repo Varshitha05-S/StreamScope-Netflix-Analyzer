@@ -231,6 +231,12 @@ year_filter = st.sidebar.slider(
     int(df["release_year"].max()),
     (int(df["release_year"].min()), int(df["release_year"].max()))
 )
+# ✅ NEW COUNTRY FILTER (ADDED)
+country_filter = st.sidebar.multiselect(
+    "Country",
+    sorted(df["country"].unique()),
+    default=sorted(df["country"].unique())
+)
 
 filtered_df = df[
     (df["type"].isin(type_filter)) &
